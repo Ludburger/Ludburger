@@ -1,0 +1,430 @@
+#item 3.a;
+create database academiatrab;
+use academiatrab;
+drop database academiatrab;
+create table academia(
+cnpj varchar (14) not null,
+nome varchar (50) not null,
+endereco varchar (100) not null,
+constraint pk_academia primary key (cnpj));
+
+create table personal_trainer(
+codigo int auto_increment,
+nome varchar (50) not null,
+cpf varchar (11) not null,
+sexo char (1) not null,
+data_nasc date not null,
+telefone varchar (15) not null,
+endereco varchar (50) not null,
+constraint pk_personal_trainer primary key (codigo));
+
+create table cliente(
+codigo int auto_increment,
+nome varchar (50) not null,
+cpf varchar (11) not null,
+sexo char (1) not null,
+data_nasc date not null,
+telefone varchar (15) not null,
+endereco varchar (50) not null,
+constraint pk_cliente primary key (codigo));
+
+create table cargo(
+codigo int not null,
+descricao varchar (50) not null,
+salario decimal (10,2) not null,
+constraint pk_cargo primary key (codigo));
+
+create table plano(
+codigo int not null,
+descricao varchar (50) not null,
+valor decimal (10,2) not null,
+constraint pk_cargo primary key (codigo));
+
+create table auxilia(
+codigo_personal int,
+codigo_cliente int,
+constraint pk_auxilia primary key (codigo_personal, codigo_cliente),
+constraint fk_codigo_personal foreign key (codigo_personal) references personal_trainer (codigo),
+constraint fk_cliente foreign key (codigo_cliente) references cliente (codigo));
+
+create table lista_exercicios(
+tipo int not null,
+descricao varchar (50) not null,
+constraint pk_lista_exercicios primary key (tipo));
+
+create table treina(
+codigo_lista int,
+codigo_cliente int,
+constraint pk_treina primary key (codigo_lista, codigo_cliente),
+constraint fk_lista foreign key (codigo_lista) references lista_exercicios (tipo),
+constraint fk_cliente_treina foreign key (codigo_cliente) references cliente (codigo));
+
+create table cria_altera(
+codigo_personal int,
+codigo_lista int,
+constraint pk_cria_altera primary key (codigo_lista, codigo_personal),
+constraint fk_lista2 foreign key (codigo_lista) references lista_exercicios (tipo),
+constraint fk_personal_cria foreign key (codigo_personal) references personal_trainer (codigo));
+
+create table contrata(
+codigo int not null,
+academia_cnpj varchar (14),
+codigo_personal int,
+data_inicio date not null,
+data_fim date not null,
+constraint pk_contrata primary key (codigo),
+constraint fk_academia_cnpj foreign key (academia_cnpj) references academia (cnpj),
+constraint fk_personal_contrata foreign key (codigo_personal) references personal_trainer (codigo));
+
+create table matricula(
+codigo int not null,
+academia_cnpj varchar (14),
+codigo_cliente int,
+data_inicio date not null,
+data_fim date not null,
+constraint pk_matricula primary key (codigo),
+constraint fk_academia_cnpj2 foreign key (academia_cnpj) references academia (cnpj),
+constraint fk_cliente_matricula foreign key (codigo_cliente) references cliente (codigo));
+
+create table tem(
+codigo_cargo int,
+codigo_personal int,
+constraint pk_tem primary key (codigo_cargo, codigo_personal),
+constraint fk_cod_cargo foreign key (codigo_cargo) references cargo (codigo),
+constraint fk_cod_personal foreign key (codigo_personal) references contrata (codigo));
+
+create table possui(
+codigo_plano int,
+codigo_cliente int,
+constraint pk_plano primary key (codigo_plano, codigo_cliente),
+constraint fk_cod_plano foreign key (codigo_plano) references plano (codigo),
+constraint fk_cod_cliente foreign key (codigo_cliente) references matricula (codigo));
+
+#item 3.c;
+#inserção de dados personal;
+
+insert into academia (cnpj, nome, endereco) values (12345678901234, "Academia Trabalho", "Av Brasil, 50. São Paulo");
+insert into personal_trainer (nome, cpf, sexo, data_nasc, telefone, endereco) values ("josé","12345678910", "m", "1998-12-23", "1199878545", "rua mickey mouse");
+insert into personal_trainer (nome, cpf, sexo, data_nasc, telefone, endereco) values ("maria","02548621084", "f", "1988-11-28", "1199878545", "rua miney mouse");
+insert into personal_trainer (nome, cpf, sexo, data_nasc, telefone, endereco) values ("joão","45879456321", "m", "2000-05-17", "1199568545", "rua disney");
+
+#inserção de dados clientes;
+insert into cliente (nome, cpf, sexo, data_nasc, telefone, endereco) values ("joana","45879456321", "f", "1997-05-17", "1199568546", "rua donald");
+insert into cliente (nome, cpf, sexo, data_nasc, telefone, endereco) values ("matheus","15879456321", "m", "1998-04-17", "1199564546", "rua pateta");
+insert into cliente (nome, cpf, sexo, data_nasc, telefone, endereco) values ("regina","15874685025", "f", "1994-02-05", "1199568556", "rua pluto");
+insert into cliente (nome, cpf, sexo, data_nasc, telefone, endereco) values ("rogério","15874687025", "m", "1984-02-08", "1199568596", "rua abacate");
+
+
+#inserção de dados cargo;
+
+insert into cargo (codigo, descricao, salario) values (4, "adm", "8000.00");
+insert into cargo (codigo, descricao, salario) values (1, "personal", "2500.00");
+insert into cargo (codigo, descricao, salario) values (2, "personal", "2500.00");
+insert into cargo (codigo, descricao, salario) values (3, "recepcionista", "1300.00");
+
+#inserção de dados plano;
+insert into plano (codigo, descricao, valor) values (1, "familia", "150.00");
+insert into plano (codigo, descricao, valor) values (2, "individual", "100.00");
+insert into plano (codigo, descricao, valor) values (3, "gold", "200.00");
+
+#inserção de dados auxilia;
+
+insert into auxilia (codigo_personal, codigo_cliente) values (1,1);
+insert into auxilia (codigo_personal, codigo_cliente) values (1,2);
+insert into auxilia (codigo_personal, codigo_cliente) values (2,3);
+insert into auxilia (codigo_personal, codigo_cliente) values (2,4);
+
+#inserção de dados lista_exercicios;
+
+insert into lista_exercicios (tipo, descricao) values (1, "definição");
+insert into lista_exercicios (tipo, descricao) values (2, "funcional");
+insert into lista_exercicios (tipo, descricao) values (3, "força");
+insert into lista_exercicios (tipo, descricao) values (4, "resistencia");
+
+#inserção de dados treina;
+
+insert into treina (codigo_lista, codigo_cliente) values (1,3);
+insert into treina (codigo_lista, codigo_cliente) values (3,3);
+insert into treina (codigo_lista, codigo_cliente) values (2,1);
+insert into treina (codigo_lista, codigo_cliente) values (4,2);
+
+#inserção de dados cria_altera;
+
+insert into cria_altera (codigo_personal, codigo_lista) values (1,2);
+insert into cria_altera (codigo_personal, codigo_lista) values (2,3);
+insert into cria_altera (codigo_personal, codigo_lista) values (1,4);
+
+#inserção de dados contrata;
+
+insert into contrata (codigo, academia_cnpj, codigo_personal, data_inicio, data_fim) values
+(1, 12345678901234, 1, "2023-03-12", "1000-01-01");
+insert into contrata (codigo, academia_cnpj, codigo_personal, data_inicio, data_fim) values
+(2, 12345678901234, 2, "2023-02-10", "1000-01-01");
+insert into contrata (codigo, academia_cnpj, codigo_personal, data_inicio, data_fim) values
+(3, 12345678901234, 3, "2023-02-01", "1000-01-01");
+
+#inserção de dados matricula;
+
+insert into matricula (codigo, academia_cnpj, codigo_cliente, data_inicio, data_fim) values (1, 12345678901234, 1, "2023-04-25", "1000-01-01");
+insert into matricula (codigo, academia_cnpj, codigo_cliente, data_inicio, data_fim) values (2, 12345678901234, 2, "2023-04-10", "1000-01-01");
+insert into matricula (codigo, academia_cnpj, codigo_cliente, data_inicio, data_fim) values (3, 12345678901234, 3, "2023-05-04", "1000-01-01");
+insert into matricula (codigo, academia_cnpj, codigo_cliente, data_inicio, data_fim) values (4, 12345678901234, 4, "2023-05-14", "1000-01-01");
+
+#inserção de dados tem;
+
+insert into tem (codigo_cargo, codigo_personal) values (4,1);
+insert into tem (codigo_cargo, codigo_personal) values (4,2);
+insert into tem (codigo_cargo, codigo_personal) values (4,3);
+
+#inserção de dados possui;
+
+insert into possui (codigo_plano, codigo_cliente) values (1,2);
+insert into possui (codigo_plano, codigo_cliente) values (3,1);
+insert into possui (codigo_plano, codigo_cliente) values (2,3);
+insert into possui (codigo_plano, codigo_cliente) values (1,4);
+
+
+#item 3.b;
+update cargo set salario ="8000.00" where codigo =4;
+update personal_trainer set data_nasc = "1998-12-23" where codigo = 1;
+drop table contrata;
+alter table personal_trainer change nome nome_personal varchar (50) ;
+
+#item 3.d;
+create table academia_bkp(
+cnpj varchar (14) not null,
+nome varchar (50) not null,
+endereco varchar (100) not null,
+constraint pk_academia primary key (cnpj));
+
+create table personal_trainer_bkp(
+codigo int auto_increment,
+nome varchar (50) not null,
+cpf varchar (11) not null,
+sexo char (1) not null,
+data_nasc date not null,
+telefone varchar (15) not null,
+endereco varchar (50) not null,
+constraint pk_personal_trainer primary key (codigo));
+
+create table cliente_bkp(
+codigo int auto_increment,
+nome varchar (50) not null,
+cpf varchar (11) not null,
+sexo char (1) not null,
+data_nasc date not null,
+telefone varchar (15) not null,
+endereco varchar (50) not null,
+constraint pk_cliente primary key (codigo));
+
+create table cargo_bkp(
+codigo int not null,
+descricao varchar (50) not null,
+salario decimal (10,2) not null,
+constraint pk_cargo primary key (codigo));
+
+create table plano_bkp(
+codigo int not null,
+descricao varchar (50) not null,
+valor decimal (10,2) not null,
+constraint pk_cargo primary key (codigo));
+
+create table auxilia_bkp(
+codigo_personal_bkp int,
+codigo_cliente_bkp int,
+constraint pk_auxilia_ primary key (codigo_personal_bkp, codigo_cliente_bkp),
+constraint fk_codigo_personal_ foreign key (codigo_personal_bkp) references personal_trainer (codigo),
+constraint fk_cliente_ foreign key (codigo_cliente_bkp) references cliente (codigo));
+
+create table lista_exercicios_bkp(
+tipo int not null,
+descricao varchar (50) not null,
+constraint pk_lista_exercicios primary key (tipo));
+
+create table treina_bkp(
+codigo_lista_bkp int,
+codigo_cliente_bkp int,
+constraint pk_treina_ primary key (codigo_lista_bkp, codigo_cliente_bkp),
+constraint fk_lista_ foreign key (codigo_lista_bkp) references lista_exercicios (tipo),
+constraint fk_cliente_treina_ foreign key (codigo_cliente_bkp) references cliente (codigo));
+
+create table cria_altera_bkp(
+codigo_personal_bkp int,
+codigo_lista_bkp int,
+constraint pk_cria_altera_ primary key (codigo_lista_bkp, codigo_personal_bkp),
+constraint fk_lista2_ foreign key (codigo_lista_bkp) references lista_exercicios (tipo),
+constraint fk_personal_cria_ foreign key (codigo_personal_bkp) references personal_trainer (codigo));
+
+create table contrata_bkp(
+codigo_bkp int not null,
+academia_cnpj varchar (14),
+codigo_personal int,
+data_inicio date not null,
+data_fim date not null,
+constraint pk_contrata_ primary key (codigo_bkp),
+constraint fk_academia_cnpj_ foreign key (academia_cnpj) references academia (cnpj),
+constraint fk_personal_contrata_ foreign key (codigo_personal) references personal_trainer (codigo));
+
+create table matricula_bkp(
+codigo_bkp int not null,
+academia_cnpj varchar (14),
+codigo_cliente int,
+data_inicio date not null,
+data_fim date not null,
+constraint pk_matricula_ primary key (codigo_bkp),
+constraint fk_academia_cnpj2_ foreign key (academia_cnpj) references academia (cnpj),
+constraint fk_cliente_matricula_ foreign key (codigo_cliente) references cliente (codigo));
+
+create table tem_bkp(
+codigo_cargo_bkp int,
+codigo_personal_bkp int,
+constraint pk_tem_ primary key (codigo_cargo_bkp, codigo_personal_bkp),
+constraint fk_cod_cargo_ foreign key (codigo_cargo_bkp) references cargo (codigo),
+constraint fk_cod_personal_ foreign key (codigo_personal_bkp) references contrata (codigo));
+
+create table possui_bkp(
+codigo_plano_bkp int,
+codigo_cliente_bkp int,
+constraint pk_plano_ primary key (codigo_plano_bkp, codigo_cliente_bkp),
+constraint fk_cod_plano_ foreign key (codigo_plano_bkp) references plano (codigo),
+constraint fk_cod_cliente_ foreign key (codigo_cliente_bkp) references matricula (codigo));
+
+insert into academia_bkp (select *from academia);
+insert into personal_trainer_bkp (select * from personal_trainer);
+insert into cliente_bkp (select * from cliente);
+insert into cargo_bkp (select * from cargo);
+insert into plano_bkp (select * from plano);
+insert into auxilia_bkp (select * from auxilia);
+insert into lista_exercicios_bkp (select * from lista_exercicios);
+insert into treina_bkp (select * from treina);
+insert into cria_altera_bkp (select * from cria_altera);
+insert into contrata_bkp (select * from contrata);
+insert into matricula_bkp (select * from matricula);
+insert into tem_bkp (select * from tem);
+insert into possui_bkp (select * from possui);
+
+#item 3.e
+select * from cliente;
+select * from contrata;
+select * from cargo;
+
+#item 3.f
+select salario from cargo;
+select data_inicio from contrata;
+select nome_personal from personal_trainer;
+
+#item 3.g
+select p.nome_personal, c.nome
+ from cliente as c, personal_trainer as p, auxilia as a 
+ where c.codigo = a.codigo_cliente and p.codigo = a.codigo_personal;
+ 
+select p.descricao, c.nome 
+from plano as p, possui as t, cliente as c 
+where p.codigo = t.codigo_plano and c.codigo = t.codigo_cliente;
+
+#item 3.h
+select p.nome_personal, c.nome from auxilia as a
+ inner join cliente as c on c.codigo = a.codigo_cliente 
+ inner join personal_trainer as p on p.codigo = a.codigo_personal;
+
+select p.descricao, c.nome from possui as t
+inner join plano as p on p.codigo = t.codigo_plano
+inner join cliente as c on c.codigo = t.codigo_cliente;
+
+#item 3.i
+create view personal_aluno as select p.nome_personal, c.nome
+ from cliente as c, personal_trainer as p, auxilia as a 
+ where c.codigo = a.codigo_cliente and p.codigo = a.codigo_personal;
+ 
+create view plano_cliente as select p.descricao, c.nome from possui as t
+inner join plano as p on p.codigo = t.codigo_plano
+inner join cliente as c on c.codigo = t.codigo_cliente;
+
+select * from plano_cliente;
+
+delimiter //
+create procedure consulta_matricula (in nome_busca varchar(50))
+begin 
+declare codigo_cliente2 int;
+select codigo into codigo_cliente2 from cliente where nome = nome_busca;
+select m.data_inicio, c.nome
+from matricula as m, cliente as c 
+where m.codigo_cliente = codigo_cliente2;
+end //
+delimiter //
+
+select codigo from cliente where nome = "joana";
+
+select m.data_inicio, c.nome
+from matricula as m, cliente as c 
+where m.codigo_cliente = 1;
+
+
+call consulta_matricula("joana");
+
+
+#item 3.j
+select * from cliente;
+
+
+#item 3.k
+
+set @autocommit =0;
+
+delimiter //
+create procedure Selectcliente() 
+begin select * FROM cliente; 
+END; //
+
+delimiter // 
+#item 3.k
+
+set @autocommit =0;
+
+delimiter //
+create procedure Selectcliente() 
+begin select * FROM cliente; 
+END; //
+
+delimiter // 
+create procedure Insertcliente (in nome1 varchar(50), in cpf1 varchar(11), in sexo1 char(1), in data1 date, in telefone1 varchar(15), in endereco1 varchar(50)) 
+BEGIN
+DECLARE erro TINYINT DEFAULT FALSE;
+DECLARE CONTINUE HANDLER FOR SQLEXCEPTION SET erro = true; 
+insert into cliente(Nome, CPF, Sexo, Data_nasc, Telefone, Endereco) values('Rodrigo Faro', 23780808188, 'm', '2000-03-23', 115531649412341, 'Rua Dr Pinheiro');
+ IF erro = FALSE THEN
+COMMIT;
+select 'Matricula efetivada com sucesso' AS Resultadomatricula;
+ELSE
+ROLLBACK;
+select 'Erro na realizacao da matrícula' AS Resultadomatricula;
+END IF;
+END; //
+
+
+#delimiter // 
+#create procedure Insertcliente (in nome1 varchar(50), in cpf1 varchar(11), in sexo1 char(1), in data1 date, in telefone1 varchar(15), in endereco1 varchar(50)) 
+#BEGIN
+#insert into cliente(Nome, CPF, Sexo, Data_nasc, Telefone, Endereco) values(nome1, cpf1, sexo1, data1, telefone1, endereco1);
+#END; //
+
+CALL Insertcliente('Rodrigo Faro', 23780808188, 'm', '2000-03-23', 115531649412341, 'Rua Dr Pinheiro');
+
+CALL Selectcliente();
+# item #3.l
+
+
+#item 3.m
+
+select count(*) from possui where codigo_plano = 1;
+select descricao, (select count(*) codigo_cliente from possui)as possui from plano;
+
+#item 3.n
+Create Index cliente_nome_index ON cliente(Nome);
+Create Index cliente_CPF_index ON cliente(CPF);
+Create Index personal_nome_index ON personal_trainer(Nome);
+Create Index personal_CPF_index ON personal_trainer(CPF);
+
+
+select*from possui;
+select *from plano;
